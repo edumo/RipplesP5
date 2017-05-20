@@ -30,18 +30,9 @@ void main( void ) {
 			gl_FragColor = blue;
 		}
 	} else {
-		float sum = 0.;
-		sum += texture2D(currenttexture, position + pixel * vec2(-1., -1.)).g;
-		sum += texture2D(currenttexture, position + pixel * vec2(-1., 0.)).g;
-		sum += texture2D(currenttexture, position + pixel * vec2(-1., 1.)).g;
-		sum += texture2D(currenttexture, position + pixel * vec2(1., -1.)).g;
-		sum += texture2D(currenttexture, position + pixel * vec2(1., 0.)).g;
-		sum += texture2D(currenttexture, position + pixel * vec2(1., 1.)).g;
-		sum += texture2D(currenttexture, position + pixel * vec2(0., -1.)).g;
-		sum += texture2D(currenttexture, position + pixel * vec2(0., 1.)).g;
-		vec4 me = texture2D(currenttexture, position);
+		
 
-vec2 offset[4];
+	vec2 offset[4];
 
  	offset[0] = pixel  * vec2(-1.0, 0.0);
         offset[1] = pixel  * vec2(1.0, 0.0);
@@ -58,22 +49,7 @@ vec2 offset[4];
         sum2 *= damping;
 
 
-		if (me.g <= 0.1) {
-			if ((sum >= 2.9) && (sum <= 3.1)) {
-				gl_FragColor = live;
-			} else if (me.b > 0.004) {
-				gl_FragColor = vec4(0., 0., max(me.b - 0.004, 0.25), 0.);
-			} else {
-				gl_FragColor = dead;
-			}
-		} else {
-			if ((sum >= 1.9) && (sum <= 3.1)) {
-				gl_FragColor = live;
-			} else {
-				gl_FragColor = blue;
-			}
-		}
 
- gl_FragColor = vec4(sum2, 1.0);
+	gl_FragColor = vec4(sum2, 1.0);
 	}
 }
