@@ -6,37 +6,56 @@ PShader conway;
 PGraphics pg;
 PGraphics pg2;
 PGraphics pg3;
+PGraphics target;
 
 int pingpong = 0;
 float damping = 0.990;
 
+PShader edges;  
+PImage bg;
+
 //Using three FBO because I can't use the current
 
-void setup() {
-  size(400, 400, P3D);    
+int w= 400;
+int h = 400;
 
-  pg = createGraphics(400, 400, P2D);
+void setup() {
+  size(800, 400, P3D);  
+
+  bg = loadImage("rocks.jpg");
+  bg.resize(w, h);
+
+  pg = createGraphics(w, h, P2D);
   pg.noSmooth();
   pg.beginDraw();
   pg.background(0);
   pg.endDraw();
 
-  pg2 = createGraphics(400, 400, P2D);
+  pg2 = createGraphics(w, h, P2D);
   pg2.noSmooth();
   pg2.beginDraw();
   pg2.background(0);
   pg2.endDraw();
 
-  pg3 = createGraphics(400, 400, P2D);
+  pg3 = createGraphics(w, h, P2D);
   pg3.noSmooth();
   pg3.beginDraw();
   pg3.background(0);
   pg3.endDraw();
 
+  target = createGraphics(w, h, P2D);
+  target.noSmooth();
+  target.beginDraw();
+  target.background(0);
+  target.endDraw();
+
   conway = loadShader("ripples.glsl");
   conway.set("resolution", float(pg.width), float(pg.height));
 
-  frameRate(60);
+  edges = loadShader("edges.glsl");
+  edges.set("resolution", (float) width, (float) height);
+
+  
 }
 
 void draw() {
@@ -78,14 +97,25 @@ void draw() {
   pgTemp.shader(conway);
   pgTemp.rect(0, 0, pg.width, pg.height);
   pgTemp.endDraw();  
-  image(pgTemp, 0, 0, width, height);
+
+  edges.set("resolution", (float) width, 
+    (float) height);
+
+  edges.set("bgTexture", bg);
+  target.beginDraw();
+  target.shader(edges);
+  target.image(pgTemp, 0, 0);
+  target.endDraw();
+  image(target, bg.width, 0);
+  
+  image(pgTemp,0, 0);
   text(frameRate+"\ndamping "+damping, 10, 10);
 }
 
-void keyPressed(){
-    if(keyCode == UP){
-      damping+=0.005;
-    }else{
-      damping-=0.005;
-    }
+void keyPressed() {
+  if (keyCode == UP) {
+    damping+=0.005;
+  } else {
+    damping-=0.005;
+  }
 }
