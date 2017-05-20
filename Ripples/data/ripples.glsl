@@ -1,4 +1,4 @@
-// Conway's game of life
+
 
 #ifdef GL_ES
 precision highp float;
