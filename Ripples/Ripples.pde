@@ -1,8 +1,8 @@
-// GLSL version of Conway's game of life, ported from GLSL sandbox:
+// GLSL version of ripplesShader's game of life, ported from GLSL sandbox:
 // http://glsl.heroku.com/e#207.3
 // Exemplifies the use of the ppixels uniform in the shader, that gives
 // access to the pixels of the previous frame.
-PShader conway;
+PShader ripplesShader;
 PGraphics pg;
 PGraphics pg2;
 PGraphics pg3;
@@ -33,14 +33,14 @@ void setup() {
   pg3.background(0);
   pg3.endDraw();
 
-  conway = loadShader("ripples.glsl");
-  conway.set("resolution", float(pg.width), float(pg.height));
+  ripplesShader = loadShader("ripples.glsl");
+  ripplesShader.set("resolution", float(pg.width), float(pg.height));
 
   frameRate(60);
 }
 
 void draw() {
-  conway.set("time", millis()/1000.0);
+  
   float x = map(mouseX, 0, width, 0, 1);
   float y = map(mouseY, 0, height, 1, 0);
 
@@ -59,14 +59,14 @@ void draw() {
   pingpong++;// = !pingpong;
 
 
-  conway.set("currenttexture", pgLast);
-  conway.set("lasttexture", pgLast2);
-  conway.set("damping", damping);
+  ripplesShader.set("currenttexture", pgLast);
+  ripplesShader.set("lasttexture", pgLast2);
+  ripplesShader.set("damping", damping);
 
   pgLast2.beginDraw();
 
   pgLast2.resetShader();
-  if (mousePressed) {
+  if (pmouseX != mouseX) {
     pgLast2.fill(255);
     pgLast2.ellipse(mouseX, mouseY, 5, 5);
     pgLast2.ellipse(mouseX+100, mouseY, 5, 5);
@@ -75,7 +75,7 @@ void draw() {
 
   pgTemp.beginDraw();
   pgTemp.background(0);
-  pgTemp.shader(conway);
+  pgTemp.shader(ripplesShader);
   pgTemp.rect(0, 0, pg.width, pg.height);
   pgTemp.endDraw();  
   image(pgTemp, 0, 0, width, height);

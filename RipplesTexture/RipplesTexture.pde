@@ -11,7 +11,7 @@ PGraphics target;
 int pingpong = 0;
 float damping = 0.990;
 
-PShader edges;  
+PShader blend;  
 PImage bg;
 
 //Using three FBO because I can't use the current
@@ -52,17 +52,14 @@ void setup() {
   conway = loadShader("ripples.glsl");
   conway.set("resolution", float(pg.width), float(pg.height));
 
-  edges = loadShader("edges.glsl");
-  edges.set("resolution", (float) width, (float) height);
+  blend = loadShader("blend.glsl");
+  
 
   
 }
 
 void draw() {
-  conway.set("time", millis()/1000.0);
-  float x = map(mouseX, 0, width, 0, 1);
-  float y = map(mouseY, 0, height, 1, 0);
-
+  
   PGraphics pgTemp = null;
   PGraphics pgLast = null;
   PGraphics pgLast2 = null;
@@ -85,7 +82,7 @@ void draw() {
   pgLast2.beginDraw();
 
   pgLast2.resetShader();
-  if (mousePressed) {
+  if (pmouseX != mouseX) {
     pgLast2.fill(255);
     pgLast2.ellipse(mouseX, mouseY, 5, 5);
     pgLast2.ellipse(mouseX+100, mouseY, 5, 5);
@@ -98,12 +95,9 @@ void draw() {
   pgTemp.rect(0, 0, pg.width, pg.height);
   pgTemp.endDraw();  
 
-  edges.set("resolution", (float) width, 
-    (float) height);
-
-  edges.set("bgTexture", bg);
+  blend.set("bgTexture", bg);
   target.beginDraw();
-  target.shader(edges);
+  target.shader(blend);
   target.image(pgTemp, 0, 0);
   target.endDraw();
   image(target, bg.width, 0);
